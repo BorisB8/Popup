@@ -1,0 +1,58 @@
+<mat-toolbar>
+    <span>{{service.form.controls['$key'].value?"Uredi":"Nova osoba"}}</span>   <!-- Uredi ili nova osoba ovisi gdje se klikne -->
+    <span class="fill-remaining-space"></span>
+    <button class="btn-dialog-close" mat-stroked-button (click)="onClose()" tabIndex="-1"><mat-icon>clear</mat-icon></button>
+  </mat-toolbar>
+<form [formGroup]="service.form" class="normal-form" (submit)="onSubmit()">  <!-- koristimo form grupu iz servisa, on submit pokreće se metoda iz TS-a te dodaje osobu u bazu -->
+  <mat-grid-list cols="2" rowHeight="300px">
+    <mat-grid-tile>
+<div class="controles-container">
+  <input type="hidden" formControlName="$key">   <!-- skriveni auto generirani key prekoj kojeg ćemo vezati ostale unesene varijable-> servis->database -->
+  <mat-form-field>
+    <input formControlName="fullName" matInput placeholder="Upišite puno ime i prezime osobe*">
+    <mat-error>Ovaj unos je obavezan</mat-error>   <!-- Validator definiran u servisu / daje grešku ukoliko nisu ispunjeni zadani uvjeti -->
+  </mat-form-field>
+  <mat-form-field>
+    <input formControlName="mobile" matInput placeholder="Upišite broj mobitela osobe*">
+    <mat-error *ngIf="service.form.controls['mobile'].errors?.required">Ovaj unos je obavezan</mat-error>  <!-- za svaki validator moramo posebno definirati grešku -->
+    <mat-error *ngIf="service.form.controls['mobile'].errors?.minlength">Minimalni unos je 8 brojeva</mat-error>  <!-- za svaki validator moramo posebno definirati grešku -->
+  </mat-form-field>
+    <mat-form-field>
+    <input formControlName="email" matInput placeholder="Upišite e-mail osobe">
+    <mat-error>E-mail nije važeći</mat-error>
+    </mat-form-field>
+</div>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <div class="controles-container">
+          <div class="add-bottom-padding">
+            <mat-radio-group formControlName="gender">  <!-- angular material "picker" -->
+              <mat-radio-button value="1">Muško</mat-radio-button>
+              <mat-radio-button value="2">Žensko</mat-radio-button>
+              <mat-radio-button value="3">Ostalo</mat-radio-button>
+            </mat-radio-group>
+          </div>
+          <mat-form-field>
+            <mat-select formControlName="eyeColour" placeholder="Odaberite boju očiju osobe"> <!-- material dropdown meni -->
+              <mat-option>Nijedna</mat-option>
+              <ng-container *ngFor="let eyeColour of eyeColours">  <!-- for petlja vrti sve boje definirane u ts-u -->
+                <mat-option value="{{eyeColour.id}}">{{eyeColour.value}}</mat-option> <!-- preko id-a nam daje vrijednos definiranu u TS-u -->
+              </ng-container>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <input formControlName="birthDate" matInput [matDatepicker]="picker" placeholder="Odaberite datum rođenja"> <!-- material datepicker -->
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle> <!-- toggle button koji otvara ili zatvara kalendar -->
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+          <div class="add-bottom-padding">
+            <mat-checkbox formControlName="isAlive">Živa osoba</mat-checkbox> <!-- material checkbox -->
+          </div>
+          <div class="button-row">
+            <button mat-raised-button color="primary" type="submit" [disabled]="service.form.invalid">Spremi</button> <!-- ukoliko nisu ispunjeni validatori iz servisa button je onemogućen =>> [disabled]="service.form.invalid" -->
+            <button mat-raised-button color="warn" (click)="onClear()">Obriši</button> <!-- Na klik pokreće metodu onClear() iz TS-a -->
+          </div>
+      </div>
+    </mat-grid-tile>
+  </mat-grid-list>
+</form>

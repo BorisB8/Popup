@@ -1,0 +1,49 @@
+<div class="search-div">
+    <button mat-raised-button (click)="onCreate()">  <!-- click pokreće onCreate()>>Dialog  -->
+      <mat-icon>add</mat-icon>Dodaj
+    </button> <!-- Button koji briše unos u tražilicu -->
+    <mat-form-field class="search-form-field" floatLabel="never">
+      <input matInput [(ngModel)]="searchKey" placeholder="Pretraži" autocomplete="off" (keyup)="applyFilter()"> <!-- searchKey definiran u TS-u pomoću kojeg filtriramo -->
+      <button mat-button matSuffix mat-icon-button aria-label="Clear"*ngIf="searchKey"  (click)="onSearchClear()"> <!-- Button koji briše unos u tražilicu -->
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+<div class="mat-elevation-z8">
+  <mat-table [dataSource]="listData" matSort>   <!-- matSort za sortiranje podataka angular Material -->
+    <ng-container matColumnDef="fullName">  <!-- kolona Ime i prezime -->
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Ime i prezime</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.fullName}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="mobile"> <!-- kolona mobitel -->
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Broj mobitela</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.mobile}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="email">  <!-- kolona email -->
+        <mat-header-cell *matHeaderCellDef mat-sort-header>E-mail</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.email}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="actions">  <!-- kolona sa akcijama UREDI i OBRIŠI -->
+        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <button mat-icon-button (click)="onEdit(row)"><mat-icon>launch</mat-icon></button>  <!-- na uredi button (click)=onEdit se ponovno pokreće dijalog za uređivanje  -->
+          <button mat-icon-button color="warn" (click)="onDelete(row.$key)"><mat-icon>delete_outline</mat-icon></button> <!-- trigera on Delete funkciju koja briše unos definiran u TS-u  -->
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="loading">
+          <mat-footer-cell *matFooterCellDef colspan="6"> <!-- ispisuje Učitavanje podataka dok je [ngClass]="{'hide':listData!=null akda pokaže podatke sakrije ispis -->
+            Učitavanje podataka...
+          </mat-footer-cell>
+        </ng-container>
+        <ng-container matColumnDef="noData">
+          <mat-footer-cell *matFooterCellDef colspan="6"> <!-- ispisuje Nema podataka dok nema unosa u tablici [ngClass]="{'hide':!(listData!=null && listData.data.length==0-->
+            Nema podataka.                                 <!-- ukoliko je unos postojeći ngClass mu kaže da sakrije ispis-->
+          </mat-footer-cell>
+        </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>  <!-- header -->
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row> <!-- Body -->
+    <mat-footer-row *matFooterRowDef="['loading']" [ngClass]="{'hide':listData!=null}"></mat-footer-row>
+    <mat-footer-row *matFooterRowDef="['noData']" [ngClass]="{'hide':!(listData!=null && listData.data.length==0)}"></mat-footer-row>
+  </mat-table>
+  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="5" showFirstLastButtons></mat-paginator>  <!-- paginator material angular -->
+</div>

@@ -1,0 +1,11 @@
+• src
++---• app
+/   +---• persons
+/   /   /--persons.component.ts/.html/.css
+/   /   +--•  person
+/   /   /  /--person.component.ts/.html/.css
+/   /   /
+/   /   +--• shared
+/   /      /--person.service.ts (form group)
+/   /
+/   /--app.module.ts
